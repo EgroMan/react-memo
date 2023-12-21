@@ -5,6 +5,7 @@ import styles from "./Cards.module.css";
 import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
+import { useSelector } from "react-redux";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -41,21 +42,34 @@ function getTimerValue(startDate, endDate) {
  * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
  */
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
-  // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
-  const [cards, setCards] = useState([]);
-  // Текущий статус игры
-  const [status, setStatus] = useState(STATUS_PREVIEW);
 
+  // режим 3 ошибки статус
+  const gameLightRegime = useSelector(state=>state.game.gameRegime)
+  // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
+  const [cards, setCards] = useState([])
+  // Текущий статус игры
+  const [status, setStatus] = useState(STATUS_PREVIEW)
   // Дата начала игры
-  const [gameStartDate, setGameStartDate] = useState(null);
+  const [gameStartDate, setGameStartDate] = useState(null)
   // Дата конца игры
-  const [gameEndDate, setGameEndDate] = useState(null);
+  const [gameEndDate, setGameEndDate] = useState(null)
+  //счетчик попыток игры
+  const [attempts, setAttempts] = useState('')
 
   // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
     seconds: 0,
     minutes: 0,
   });
+
+  function restartAttempt(card) {
+    console.log(card); // сохраняем эту часть кода
+    const newCards = cards.map(item => ({
+      ...item,
+      open: item.id === card.id
+    }));
+    setCards(newCards);
+  }
 
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
@@ -127,9 +141,18 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     // "Игрок проиграл", т.к на поле есть две открытые карты без пары
     if (playerLost) {
-      finishGame(STATUS_LOST);
+      setAttempts(prevAttempts => prevAttempts - 1); // обновление состояния попыток
+      const updatedAttempts = attempts - 1; // обновление локальной переменной для отображения состояния
+      if (gameLightRegime) {
+        if (updatedAttempts <= 0) {
+          finishGame(STATUS_LOST);
+        }
+      } else {
+        finishGame(STATUS_LOST);
+      }
       return;
     }
+    
 
     // ... игра продолжается
   };
@@ -138,6 +161,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   // Игровой цикл
   useEffect(() => {
+    setAttempts(2)
     // В статусах кроме превью доп логики не требуется
     if (status !== STATUS_PREVIEW) {
       return;
@@ -175,10 +199,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        <div className={!gameLightRegime?styles.display:{}}>
+        <div className={styles.attempts}>Число попыток: {attempts+1}</div>
+        </div>
         <div className={styles.timer}>
           {status === STATUS_PREVIEW ? (
             <div>
-              <p className={styles.previewText}>Запоминайте пары!</p>
+              <p  className={styles.previewText}>Запоминайте пары!</p>
               <p className={styles.previewDescription}>Игра начнется через {previewSeconds} секунд</p>
             </div>
           ) : (
@@ -202,8 +229,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         {cards.map(card => (
           <Card
             key={card.id}
-            onClick={() => openCard(card)}
-            open={status !== STATUS_IN_PROGRESS ? true : card.open}
+            onClick={() => {openCard(card); 
+            handleClickOpenNextCard(card);
+            }}
+            open= {status !== STATUS_IN_PROGRESS? true :card.open} 
             suit={card.suit}
             rank={card.rank}
           />
@@ -221,5 +250,5 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
       ) : null}
     </div>
-  );
+  )
 }

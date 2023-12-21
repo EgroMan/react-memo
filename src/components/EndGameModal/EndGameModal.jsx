@@ -1,27 +1,47 @@
-import styles from "./EndGameModal.module.css";
-
-import { Button } from "../Button/Button";
-
-import deadImageUrl from "./images/dead.png";
-import celebrationImageUrl from "./images/celebration.png";
+import styles from "./EndGameModal.module.css"
+import { Button } from "../Button/Button"
+import deadImageUrl from "./images/dead.png"
+import celebrationImageUrl from "./images/celebration.png"
+import { Link } from "react-router-dom"
+import { postNewLeader } from "../../api"
+import { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
 
 export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, onClick }) {
-  const title = isWon ? "Вы победили!" : "Вы проиграли!";
+  const dispatch = useDispatch(); // Получаем диспетчер Redux
 
+  useEffect(() => {
+    console.log(gameNumber);
+  }, []);
+
+  const gameNumber = useSelector(state => state.game.gameNumber);
+  const gameDuration = gameDurationMinutes * 60 + gameDurationSeconds;
+
+  const [userName, setUserName] = useState('Пользователь');
+
+  const title = isWon ? (gameNumber === 3 ? "Вы попали на лидерборд" : "Вы победили!") : "Вы проиграли!";
   const imgSrc = isWon ? celebrationImageUrl : deadImageUrl;
-
   const imgAlt = isWon ? "celebration emodji" : "dead emodji";
 
   return (
     <div className={styles.modal}>
-      <img className={styles.image} src={imgSrc} alt={imgAlt} />
-      <h2 className={styles.title}>{title}</h2>
-      <p className={styles.description}>Затраченное время:</p>
-      <div className={styles.time}>
-        {gameDurationMinutes.toString().padStart("2", "0")}.{gameDurationSeconds.toString().padStart("2", "0")}
+      {/* остальной JSX код */}
+      <div onClick={()=>{
+        if (isWon && gameNumber === 3) {
+          dispatch(setGameNumber(yourPayload));
+        }
+      }}>
+        <Button onClick={onClick}>Начать сначала</Button>
       </div>
-
-      <Button onClick={onClick}>Начать сначала</Button>
+      <Link
+        onClick={() => {
+          if (isWon && gameNumber === 3) {
+            dispatch(setGameNumber(yourPayload));
+          }
+        }}
+        to="/game/leaderboard">
+        Перейти к лидерборду
+      </Link>
     </div>
   );
 }

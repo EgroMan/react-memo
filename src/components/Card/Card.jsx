@@ -47,21 +47,22 @@ const ClosedCard = ({ onClick }) => (
 );
 
 export function Card({ onClick, suit, rank, open }) {
+  const isCardOpen = open ? styles.open : '';
+
+  const handleCardClick = () => {
+    if (!open) {
+      onClick(); // переход к логике обработчика клика только если карта закрыта
+    }
+  };
+
   return (
-    <div>
-      <div
-        className={cn(styles.flipContainer, {
-          [styles.flip]: open,
-        })}
-      >
-        <div className={styles.flipper}>
-          <div className={styles.front}>
-            <ClosedCard onClick={onClick} />
-          </div>
-          <div className={styles.back}>
-            {/* Защита от читерства через dev tools: Скрываем масть и ранг пока карта не открыта */}
-            <OpenCard suit={open ? suit : ""} rank={open ? rank : ""} />
-          </div>
+    <div className={`${styles.card} ${isCardOpen}`} onClick={handleCardClick}>
+      <div className={styles.cardInner}>
+        <div className={styles.cardFront}>
+          <ClosedCard />
+        </div>
+        <div className={styles.cardBack}>
+          <OpenCard suit={suit} rank={rank} />
         </div>
       </div>
     </div>
