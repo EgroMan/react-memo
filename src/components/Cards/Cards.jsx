@@ -1,39 +1,41 @@
-import { shuffle } from "lodash";
-import { useEffect, useState } from "react";
-import { generateDeck } from "../../utils/cards";
-import styles from "./Cards.module.css";
-import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
-import { Button } from "../../components/Button/Button";
-import { Card } from "../../components/Card/Card";
+import { shuffle } from "lodash"
+import { useEffect, useState } from "react"
+import { generateDeck } from "../../utils/cards"
+import styles from "./Cards.module.css"
+import { EndGameModal } from "../../components/EndGameModal/EndGameModal"
+import { Button } from "../../components/Button/Button"
+import { Card } from "../../components/Card/Card"
 import { useSelector } from "react-redux";
 
+
 // Игра закончилась
-const STATUS_LOST = "STATUS_LOST";
-const STATUS_WON = "STATUS_WON";
+const STATUS_LOST = "STATUS_LOST"
+const STATUS_WON = "STATUS_WON"
 // Идет игра: карты закрыты, игрок может их открыть
-const STATUS_IN_PROGRESS = "STATUS_IN_PROGRESS";
+const STATUS_IN_PROGRESS = "STATUS_IN_PROGRESS"
 // Начало игры: игрок видит все карты в течении нескольких секунд
-const STATUS_PREVIEW = "STATUS_PREVIEW";
+const STATUS_PREVIEW = "STATUS_PREVIEW"
+
 
 function getTimerValue(startDate, endDate) {
   if (!startDate && !endDate) {
     return {
       minutes: 0,
       seconds: 0,
-    };
+    }
   }
 
   if (endDate === null) {
-    endDate = new Date();
+    endDate = new Date()
   }
 
-  const diffInSecconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
-  const minutes = Math.floor(diffInSecconds / 60);
-  const seconds = diffInSecconds % 60;
+  const diffInSecconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000)
+  const minutes = Math.floor(diffInSecconds / 60)
+  const seconds = diffInSecconds % 60
   return {
     minutes,
     seconds,
-  };
+  }
 }
 
 /**
@@ -41,10 +43,14 @@ function getTimerValue(startDate, endDate) {
  * pairsCount - сколько пар будет в игре
  * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
  */
+ 
+
+
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   // режим 3 ошибки статус
   const gameLightRegime = useSelector(state=>state.game.gameRegime)
+  let attemptCounter
   // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
   const [cards, setCards] = useState([])
   // Текущий статус игры
@@ -54,39 +60,43 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Дата конца игры
   const [gameEndDate, setGameEndDate] = useState(null)
   //счетчик попыток игры
-  const [attempts, setAttempts] = useState('')
+  const [attempts, setAttempts] = useState(2)
+
 
   // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
     seconds: 0,
     minutes: 0,
-  });
-
+  })
+  function handleClickOpenNextCard(card) {
+    if ((gameLightRegime && attemptCounter > 0) || (!gameLightRegime)) {
+      restartAttempt(card);
+    }
+  }
   function restartAttempt(card) {
-    console.log(card); // сохраняем эту часть кода
     const newCards = cards.map(item => ({
       ...item,
       open: item.id === card.id
     }));
     setCards(newCards);
   }
-
   function finishGame(status = STATUS_LOST) {
-    setGameEndDate(new Date());
-    setStatus(status);
+    setGameEndDate(new Date())
+    setStatus(status)
   }
+
   function startGame() {
-    const startDate = new Date();
-    setGameEndDate(null);
-    setGameStartDate(startDate);
-    setTimer(getTimerValue(startDate, null));
-    setStatus(STATUS_IN_PROGRESS);
+    const startDate = new Date()
+    setGameEndDate(null)
+    setGameStartDate(startDate)
+    setTimer(getTimerValue(startDate, null))
+    setStatus(STATUS_IN_PROGRESS)
   }
   function resetGame() {
-    setGameStartDate(null);
-    setGameEndDate(null);
-    setTimer(getTimerValue(null, null));
-    setStatus(STATUS_PREVIEW);
+    setGameStartDate(null)
+    setGameEndDate(null)
+    setTimer(getTimerValue(null, null))
+    setStatus(STATUS_PREVIEW)
   }
 
   /**
@@ -97,110 +107,97 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
    * - "Игра продолжается", если не случилось первых двух условий
    */
   const openCard = clickedCard => {
+   
     // Если карта уже открыта, то ничего не делаем
     if (clickedCard.open) {
-      return;
+      return 
     }
     // Игровое поле после открытия кликнутой карты
     const nextCards = cards.map(card => {
       if (card.id !== clickedCard.id) {
-        return card;
+        return card
       }
-
       return {
         ...card,
         open: true,
-      };
-    });
-
-    setCards(nextCards);
-
-    const isPlayerWon = nextCards.every(card => card.open);
-
+      }
+    })
+    setCards(nextCards)
+    const isPlayerWon = nextCards.every(card => card.open)
     // Победа - все карты на поле открыты
     if (isPlayerWon) {
-      finishGame(STATUS_WON);
-      return;
+      console.log(attempts)
+      finishGame(STATUS_WON)
+      return
     }
-
     // Открытые карты на игровом поле
-    const openCards = nextCards.filter(card => card.open);
-
+    const openCards = nextCards.filter(card => card.open)
     // Ищем открытые карты, у которых нет пары среди других открытых
     const openCardsWithoutPair = openCards.filter(card => {
-      const sameCards = openCards.filter(openCard => card.suit === openCard.suit && card.rank === openCard.rank);
-
+      const sameCards = openCards.filter(openCard => card.suit === openCard.suit && card.rank === openCard.rank)
       if (sameCards.length < 2) {
-        return true;
+        return true
       }
+      return false
+    })
 
-      return false;
-    });
-
-    const playerLost = openCardsWithoutPair.length >= 2;
-
+    const playerLost = openCardsWithoutPair.length >= 2
     // "Игрок проиграл", т.к на поле есть две открытые карты без пары
     if (playerLost) {
-      setAttempts(prevAttempts => prevAttempts - 1); // обновление состояния попыток
-      const updatedAttempts = attempts - 1; // обновление локальной переменной для отображения состояния
-      if (gameLightRegime) {
-        if (updatedAttempts <= 0) {
-          finishGame(STATUS_LOST);
-        }
-      } else {
-        finishGame(STATUS_LOST);
+      setAttempts(attempts - 1)
+      attemptCounter = attempts
+      if(gameLightRegime){
+      attemptCounter <= 0 ? finishGame(STATUS_LOST) :{}
       }
-      return;
+      else{finishGame(STATUS_LOST)}
+      return
     }
-    
 
     // ... игра продолжается
-  };
-
-  const isGameEnded = status === STATUS_LOST || status === STATUS_WON;
-
+  }
+  const isGameEnded = status === STATUS_LOST || status === STATUS_WON
   // Игровой цикл
   useEffect(() => {
     setAttempts(2)
     // В статусах кроме превью доп логики не требуется
     if (status !== STATUS_PREVIEW) {
-      return;
+      return
     }
 
     // В статусе превью мы
     if (pairsCount > 36) {
-      alert("Столько пар сделать невозможно");
-      return;
+      alert("Столько пар сделать невозможно")
+      return
     }
 
     setCards(() => {
-      return shuffle(generateDeck(pairsCount, 10));
-    });
+      return shuffle(generateDeck(pairsCount, 10))
+    })
 
     const timerId = setTimeout(() => {
-      startGame();
-    }, previewSeconds * 1000);
+      startGame()
+    }, previewSeconds * 1000)
 
     return () => {
-      clearTimeout(timerId);
-    };
-  }, [status, pairsCount, previewSeconds]);
+      clearTimeout(timerId)
+    }
+  }, [status, pairsCount, previewSeconds])
 
   // Обновляем значение таймера в интервале
   useEffect(() => {
+    
     const intervalId = setInterval(() => {
-      setTimer(getTimerValue(gameStartDate, gameEndDate));
-    }, 300);
+      setTimer(getTimerValue(gameStartDate, gameEndDate))
+    }, 300)
     return () => {
-      clearInterval(intervalId);
-    };
-  }, [gameStartDate, gameEndDate]);
+      clearInterval(intervalId)
+    }
+  }, [gameStartDate, gameEndDate])
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={!gameLightRegime?styles.display:{}}>
-        <div className={styles.attempts}>Число попыток: {attempts+1}</div>
         </div>
         <div className={styles.timer}>
           {status === STATUS_PREVIEW ? (
@@ -226,7 +223,9 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       </div>
 
       <div className={styles.cards}>
+   
         {cards.map(card => (
+          
           <Card
             key={card.id}
             onClick={() => {openCard(card); 
@@ -249,6 +248,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           />
         </div>
       ) : null}
+      <div className={styles.attempts}>Число попыток: {attempts+1}</div>
     </div>
   )
 }

@@ -1,26 +1,29 @@
-const route = 'https://wedev-api.sky.pro/api/leaderboard'
+const route = 'https://wedev-api.sky.pro/api/v2/leaderboard'
 
-export async function getLeaders(){
-const response = await fetch(route,   
-    {
-    method: "GET",
-})
-const data = await response.json()
-return data
+let achievementsArr;
+
+export function setVariables(userName, time, achieveA, achieveB, hardReg) {
+    const achieveUsed = (achieveA === 'a' || achieveB === 'b') ? 1 : 0;
+    const hardRegime = (!hardReg) ? 2 : 0;
+    achievementsArr = achieveUsed, hardRegime;
 }
 
-export async function postNewLeader(userName,time){
-    console.log(userName)
-    console.log(time)
-    const response = await fetch(route,   
-        {
+export async function getLeaders() {
+    const response = await fetch(route, {
+        method: "GET",
+    });
+    return await response.json();
+}
+
+export async function postNewLeader(userName, time, powerA, powerB, gameHardRegime) {
+    setVariables(userName, time, powerA, powerB, gameHardRegime);
+    const response = await fetch(route, {
         method: "POST",
         body: JSON.stringify({
-            name: `${userName}`,
-            time: `${time}`,
+            name: userName,
+            time: Number(time),
+            achievements: achievementsArr,
         }),
-    })
-    const data = await response.json()
-    console.log(data)
-    return data
-    }
+    });
+    return await response.json();
+}

@@ -1,25 +1,16 @@
 import styles from "./EndGameModal.module.css"
-import {gameRegimeReducer} from "../../store/slicegame"
+import {gameRegimeReducer} from "../../store/sliceGame"
 import { useDispatch } from "react-redux"
 
 export function CheckboxFunc() {
-  const dispatch = useDispatch();
-
-  const handleCheckboxChange = (e) => {
-    const checked = e.target.checked;
-    dispatch(gameRegimeReducer(checked ? "threeMistakes" : "default")); // Используйте gameRegimeReducer для обновления режима игры в вашем хранилище
-  };
-
+const dispatch =useDispatch()
   return (
     <div className={styles.checkbox}>
-      <h2>Режим до трех ошибок</h2>
-      <input 
-        id="checkBoxInput"  
-        className={styles.custom__box} 
-        type="checkbox"
-        onChange={handleCheckboxChange} 
-      />
-      <label htmlFor="checkBoxInput"></label>
+            <input id="checkBoxInput"  className={styles.custom__box} onClick={()=>dispatch(gameRegimeReducer())} type="checkBox"></input>
+      <label htmlFor="checkBoxInput" ></label>
+      <h2>Легкий режим</h2>
+      
+
     </div>
-  );
+  )
 }

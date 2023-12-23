@@ -5,6 +5,7 @@
     "no-unused-vars": "off",
     "no-undef": "off",
     "camelcase": ["error", { "properties": "never" }],
-    "eqeqeq": ["error", "always"]
+    "eqeqeq": ["error", "always"],
+    "no-unused-expressions": "off"  // Добавляем правило "no-unused-expressions" и отключаем его
   }
 }

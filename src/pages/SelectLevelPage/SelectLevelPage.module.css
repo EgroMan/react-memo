@@ -1,3 +1,5 @@
+
+
 .container {
   width: 100%;
   min-height: 100%;
@@ -43,9 +45,15 @@
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
-
-  border-radius: 12px;
-  background: #fff;
+  border-radius: 50px;
+  background: #111111;
+}
+.level:hover{
+  border:5px solid rgb(248, 3, 3);
+  -webkit-transition:all ease-in 0.3s;/*Chrome*/
+  -moz-transition:all ease-in 0.3s;/*Firefox*/
+  -o-transition:all ease-in 0.3s;/*Opera*/
+  -ms-transition:all ease-in 0.3s;/*Microsoft*/
 }
 
 .levelLink {
@@ -61,4 +69,20 @@
 
 .levelLink:visited {
   color: #0080c1;
+}
+
+.button{
+  margin-top: 10px;
+  font-size: 20px;
+  background-color: blue;
+  color: aliceblue;
+  border-radius: 20px;
+}
+
+.button:hover{
+  border:5px solid rgb(228, 220, 220);
+  -webkit-transition:all ease-in 0.3s;/*Chrome*/
+  -moz-transition:all ease-in 0.3s;/*Firefox*/
+  -o-transition:all ease-in 0.3s;/*Opera*/
+  -ms-transition:all ease-in 0.3s;/*Microsoft*/
 }

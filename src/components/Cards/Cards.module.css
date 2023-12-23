@@ -22,7 +22,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #004980c0;
+  background: #000102c0;
 }
 
 .header {
@@ -36,7 +36,7 @@
   display: flex;
   align-items: end;
 
-  color: #fff;
+  color: #080000;
   font-family: StratosSkyeng;
   font-size: 64px;
   font-style: normal;
@@ -60,7 +60,7 @@
 }
 
 .timerDescription {
-  color: #fff;
+  color: #080000;
   font-variant-numeric: lining-nums proportional-nums;
   font-family: StratosSkyeng;
   font-size: 16px;
@@ -72,14 +72,14 @@
 }
 .attempts {
   display: flex;
-  align-items: end;
-
-  color: #fff;
+  align-items: center;
+  color: #a50606;
   font-family: StratosSkyeng;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
   line-height: 72px;
+  flex-direction: row-reverse;
 }
 .display{
   display: none;
