@@ -72,6 +72,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [prozrenieUsed, setProzrenieUsed] = useState(false);
   const [alohomoraUsed, setAlohomoaUsed] = useState(false);
   const [timer, setTimer] = useState({ seconds: 0, minutes: 0 });
+  const isGameEnded = status === STATUS_WON || status === STATUS_LOST;
+
   function handleClickOpenNextCard(card) {
     if (gameLightRegime && attemptCounter > 0) {
       restartAttempt(card);
