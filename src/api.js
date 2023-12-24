@@ -15,8 +15,8 @@ export async function getLeaders() {
     return await response.json();
 }
 
-export async function postNewLeader(userName, time, powerA, powerB, gameHardRegime) {
-    setVariables(userName, time, powerA, powerB, gameHardRegime);
+export async function postNewLeader(userName, time, handleProzrenie, handleAlohomoa, gameHardRegime) {
+    setVariables(userName, time, handleProzrenie, handleAlohomoa, gameHardRegime);
     const response = await fetch(route, {
         method: "POST",
         body: JSON.stringify({
