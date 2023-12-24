@@ -23,43 +23,9 @@ function getTimerValue(startDate, endDate) {
   return { minutes, seconds };
 }
 
-function handleProzrenie(cards, setCards, setGameStatus, status, setProzrenieUsed) {
-  if (setProzrenieUsed) return;
 
-  setProzrenieUsed(true);
-  setCards(cards.map(card => ({ ...card, open: true })));
-  
-  if (status === STATUS_IN_PROGRESS) {
-    setGameStatus(STATUS_PAUSED);
-    
-    setTimeout(() => {
-      setCards(cards.map(card => ({ ...card, open: false })));
-      setGameStatus(STATUS_IN_PROGRESS);
-      setProzrenieUsed(false);
-    }, 5000);
-  }
-}
 
-function handleAlohomoa(cards, setCards, setAlohomoaUsed) {
-  if (setAlohomoaUsed) return;
 
-  setAlohomoaUsed(true);
-  const closedCards = cards.filter(card => !card.open);
-  const randomIndex = Math.floor(Math.random() * closedCards.length);
-  const firstCard = closedCards[randomIndex];
-  const secondCard = closedCards.find(card => card.id !== firstCard.id && card.suit === firstCard.suit && card.rank !== firstCard.rank);
-  
-  if (firstCard && secondCard) {
-    setCards(prevCards => prevCards.map(card => {
-      if (card.id === firstCard.id || card.id === secondCard.id) {
-        return { ...card, open: true };
-      }
-      return card;
-    }));
-  }
-  
-  setAlohomoaUsed(false);
-}
 
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const gameLightRegime = useSelector(state => state.game.gameRegime);
@@ -169,6 +135,47 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       clearInterval(timerInterval);
     };
   }, [gameStartDate, gameEndDate]);
+
+  function handleProzrenie(cards, setCards, setGameStatus, status, setProzrenieUsed) {
+    if (setProzrenieUsed()) return;
+  
+    setProzrenieUsed(true);
+    setCards(cards.map(card => ({ ...card, open: true })));
+  
+    if (status === STATUS_IN_PROGRESS) {
+      setGameStatus(STATUS_PAUSED);
+  
+      setTimeout(() => {
+        setCards(cards.map(card => ({ ...card, open: false })));
+        setGameStatus(STATUS_IN_PROGRESS);
+        setProzrenieUsed(false);
+      }, 5000);
+    }
+  }
+  
+  function handleAlohomoa(cards, setCards, setAlohomoaUsed) {
+    if (setAlohomoaUsed()) return;
+  
+    setAlohomoaUsed(true);
+    const closedCards = cards.filter(card => !card.open);
+    const randomIndex = Math.floor(Math.random() * closedCards.length);
+    const firstCard = closedCards[randomIndex];
+    const secondCard = closedCards.find(card => card.id !== firstCard.id && card.suit === firstCard.suit && card.rank !== firstCard.rank);
+  
+    if (firstCard && secondCard) {
+      setCards(prevCards =>
+        prevCards.map(card => {
+          if (card.id === firstCard.id || card.id === secondCard.id) {
+            return { ...card, open: true };
+          }
+          return card;
+        })
+      );
+    }
+  
+    setTimeout(() => setAlohomoaUsed(false), 5000); // Reset alohomoa used after 5 seconds
+  }
+  
   return (
     <div className={styles.container}>
       <div className={styles.header}>
