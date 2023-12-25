@@ -1,19 +1,16 @@
-
-.text{
-  color: #fff;
-  font-family: StratosSkyeng;
+.text {
+  color: #f54141;
+  font-family: "StratosSkyeng";
   font-weight: 200;
 }
 
-.header{
-margin-top: 20px;
-margin-left: 10px;
-margin-right: 10px;  
-margin-bottom: 10px;
-display: flex;
-justify-content: space-between;
+.header {
+  margin: 20px 10px 10px;
+  display: flex;
+  justify-content: space-between;
 }
-.button{
+
+.button {
   width: 246px;
   height: 40px;
   border-radius: 12px;
@@ -21,27 +18,25 @@ justify-content: space-between;
   color: #fff;
   text-align: center;
   font-variant-numeric: lining-nums proportional-nums;
-  font-family: StratosSkyeng;
+  font-family: "StratosSkyeng";
   font-size: 24px;
   font-style: normal;
   font-weight: 400;
-  line-height: 32px; 
+  line-height: 32px;
   border: none;
   cursor: pointer;
 }
 
-.button:hover{
+.button:hover {
   background: #88d109;
 }
 
-.table__header{
-  position: relative;
-  font-family: StratosSkyeng;
+.table__header,
+.table {
+  font-family: "StratosSkyeng";
   font-size: 10px;
-  margin-bottom: 5px;
   border-radius: 12px;
-  margin-left: 10px;
-  margin-right: 10px; 
+  margin: 0 10px 5px;
   padding: 10px;
   background-color: #fff;
   display: flex;
@@ -49,19 +44,59 @@ justify-content: space-between;
   justify-content: space-between;
 }
 
-.table{
-  position:relative;
-  font-family: StratosSkyeng;
-  font-size: 10px;
-  margin-bottom: 5px;
-  border-radius: 12px;
-  margin-left: 10px;
-  margin-right: 10px; 
-  padding: 10px;
-  background-color: #fff;
+.achievements__block {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+position: relative;
 }
 
+.acivkaBlockNOTPOWER,
+.acivkaBlockYESPOWER,
+.acivkaBlockNotSuper,
+.acivkaBlockYesSuper {
+  width: 32px;
+  height: 32px;
+  background-size: contain;
   
+
+}
+
+.acivkaBlockNOTPOWER {
+  background-image: url(./NoPower.svg);
+}
+
+.acivkaBlockNotSuper {
+  background-image: url(./notsuper.svg);
+}
+
+.acivkaBlockYESPOWER {
+  background-image: url(./powered.svg);
+}
+
+.acivkaBlockYesSuper {
+  background-image: url(./super.svg);
+}
+
+.acivkaBlockNOTPOWER:hover::after,
+.acivkaBlockNotSuper:hover::after {
+  position: absolute;
+  z-index: 1;
+  content: url(./textPower.svg);
+  top: -270%;
+  left: 20%;
+  height: 50px;
+  width: 100px;
+}
+
+.acivkaBlockYESPOWER:hover::after,
+.acivkaBlockYesSuper:hover::after {
+  position: absolute;
+  z-index: 1;
+  content: url(./TexSuper.svg);
+  top: -270%;
+  left: -20%;
+  height: 50px;
+  width: 100px;
+}

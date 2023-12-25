@@ -22,7 +22,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000102c0;
+  background: #004980c0;
 }
 
 .header {
@@ -35,8 +35,7 @@
 .timer {
   display: flex;
   align-items: end;
-
-  color: #080000;
+  color: #fff;
   font-family: StratosSkyeng;
   font-size: 64px;
   font-style: normal;
@@ -60,27 +59,68 @@
 }
 
 .timerDescription {
-  color: #080000;
+  color: #fff;
   font-variant-numeric: lining-nums proportional-nums;
   font-family: StratosSkyeng;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: 32px;
-
   margin-bottom: -12px;
 }
 .attempts {
+  gap: 2px;
   display: flex;
-  align-items: center;
-  color: #a50606;
+  align-items: end;
+  color: #fff;
   font-family: StratosSkyeng;
-  font-size: 20px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 72px;
-  flex-direction: row-reverse;
 }
 .display{
   display: none;
+}
+
+.superpowers{
+  position: relative;
+  display: flex;
+  gap: 15px;
+}
+
+.alohoma{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-image: url(./image/powerB.svg);
+  background-repeat: no-repeat;
+  background-position: 100%;
+  background-size: 100%;
+  width: 43px;
+  height: 43px;
+  border: #9da1a3 solid 2px;
+  border-radius: 25px;
+}
+
+.prozrenie{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-image: url(./image/powerA.svg);
+  background-repeat: no-repeat;
+  background-position: 100%;
+  background-size: 100%;
+  background-color: #C2F5FF;
+  width: 43px;
+  height: 43px;
+  border: #9da1a3 solid 2px;
+  border-radius: 25px;
+}
+
+.prozrenie:hover:after{
+  position: fixed;
+  content: url(./image/Group\ 1077240071.svg);
+  top: 50px;
+  left: 67%;
 }

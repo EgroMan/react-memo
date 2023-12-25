@@ -199,16 +199,18 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             </>
           )}
         </div>
-        {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
-      </div>
-      <div className={styles.superpowers}>
-        <button onClick={() => handleProzrenie(cards, setCards, setStatus, status, setProzrenieUsed)} disabled={prozrenieUsed}>
-          Использовать "Прозрение"
+        {status === STATUS_IN_PROGRESS ?
+        <div className={styles.superpowers}>
+        <button className={styles.prozrenie} onClick={() => handleProzrenie(cards, setCards, setStatus, status, setProzrenieUsed)} disabled={prozrenieUsed}>
+          
         </button>
-        <button onClick={() => handleAlohomoa(cards, setCards, setAlohomoaUsed)} disabled={alohomoraUsed}>
-          Использовать "Alohomoa"
+        <button className={styles.alohoma} onClick={() => handleAlohomoa(cards, setCards, setAlohomoaUsed)} disabled={alohomoraUsed}>
+          
         </button>
+      </div> : null}
+      {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
       </div>
+      
       <div className={styles.cards}>
         {cards.map(card => (
           <Card
