@@ -49,7 +49,7 @@
   flex-direction: row;
   align-items: center;
   gap: 6px;
-position: relative;
+
 }
 
 .acivkaBlockNOTPOWER,
@@ -58,8 +58,8 @@ position: relative;
 .acivkaBlockYesSuper {
   width: 32px;
   height: 32px;
-  background-size: contain;
-  
+  display: flex;
+  justify-content: center;
 
 }
 

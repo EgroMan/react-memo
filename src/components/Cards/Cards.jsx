@@ -83,27 +83,54 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   }
 
   function openCard(clickedCard) {
-    if (clickedCard.open || status !== STATUS_IN_PROGRESS) return;
-
-    const nextCards = cards.map(card => card.id === clickedCard.id ? { ...card, open: true } : card);
-    setCards(nextCards);
-
-    const openCards = nextCards.filter(card => card.open);
-    const uniqueOpenCards = getUniqueCards(openCards);
-
-    if (uniqueOpenCards.length === pairsCount * 2) {
-      finishGame(STATUS_WON);
-      return;
-    }
-
-    if (uniqueOpenCards.length % 2 === 0) {
-      setAttempts(prev => prev - 1);
-      if (attempts === 0) {
-        finishGame(STATUS_LOST);
-        return;
+    if (
+      clickedCard &&
+      clickedCard.card &&
+      clickedCard.card.suit &&
+      !clickedCard.open &&
+      status === STATUS_IN_PROGRESS
+    ) {
+      const updatedCards = cards.map((card) => {
+        if (card.id === clickedCard.card.id) {
+          return { ...card, open: true };
+        } else {
+          return card;
+        }
+      });
+      setCards(updatedCards);
+  
+      const nextCards = updatedCards.map((card) =>
+        card.id === clickedCard.id ? { ...card, open: true } : card
+      );
+  
+      const openCards = nextCards.filter((card) => card.open);
+      const uniqueOpenCards = getUniqueCards(openCards);
+  
+      if (uniqueOpenCards.length % 2 === 0) {
+        if (uniqueOpenCards.length === pairsCount * 2) {
+          finishGame(STATUS_WON);
+          return;
+        }
+  
+        if (
+          uniqueOpenCards.length === 2 &&
+          cards[uniqueOpenCards[0]].suit !== cards[uniqueOpenCards[1]].suit &&
+          cards[uniqueOpenCards[0]].rank !== cards[uniqueOpenCards[1]].rank
+        ) {
+          setAttempts((prev) => Math.max(prev - 1, 0));
+          setTimeout(() => {
+            const updatedCards = nextCards.map((card) =>
+              uniqueOpenCards.includes(card)
+                ? { ...card, open: false }
+                : card
+            );
+            setCards(updatedCards);
+          }, 1000);
+        }
       }
     }
   }
+  
 
   function getUniqueCards(cards) {
     return cards.filter(card => {
@@ -220,12 +247,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             <>
               <div className={styles.timerValue}>
                 <div className={styles.timerDescription}>min</div>
-                <div>{String(timer.minutes).padStart(2, "0")}</div>
+                <div>{timer.minutes.toString().padStart("2", "0")}</div>
               </div>
-              <span>:</span>
+              .
               <div className={styles.timerValue}>
                 <div className={styles.timerDescription}>sec</div>
-                <div>{String(timer.seconds).padStart(2, "0")}</div>
+                <div>{timer.seconds.toString().padStart("2", "0")}</div>
               </div>
             </>
           )}
@@ -243,19 +270,21 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       </div>
       
       <div className={styles.cards}>
-        {cards.map(card => (
-          <Card
-            key={card.id}
-            onClick={() => {
-              openCard(card);
-              handleClickOpenNextCard(card);
-            }}
-            open={status !== STATUS_IN_PROGRESS || card.open}
-            suit={card.suit}
-            rank={card.rank}
-          />
-        ))}
-      </div>
+  {cards.map(card => (
+    <Card
+      key={card.id}
+      onClick={() => {
+        if (card && card.suit && card.id) {
+          openCard({ card, open: card.open, id: card.id });
+          handleClickOpenNextCard(card);
+        }
+      }}
+      open={status !== STATUS_IN_PROGRESS || (card && card.open)}
+      suit={card && card.suit ? card.suit : ''}
+      rank={card && card.rank ? card.rank : ''}
+    />
+  ))}
+</div>
       {isGameEnded ? (
         <EndGameModal
           isWon={status === STATUS_WON}

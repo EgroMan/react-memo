@@ -15,16 +15,17 @@
   margin-bottom: 8px;
 }
 
-.title 
-{ styleName: Pres → Text M;
+.title {
+  color: #004980;
+  font-variant-numeric: lining-nums proportional-nums;
   font-family: StratosSkyeng;
   font-size: 40px;
+  font-style: normal;
   font-weight: 400;
   line-height: 48px;
-  letter-spacing: 0em;
-  text-align: left;
-  color: #004980;}
-
+  
+  margin-bottom: 28px;
+}
 
 .description {
   color: #000;
@@ -54,7 +55,7 @@
   font-style: normal;
   display: flex;
   gap: 10px;
-  color: #000000;
+  color: #004980;
   align-items: baseline;
   align-items: flex-end;
 }
@@ -94,4 +95,12 @@
   min-height: 25px;
   padding-left: 5px;
 }
-
+.text{
+  color: #004980;
+  font-family: StratosSkyeng;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-style: normal;
+}
+.text:hover{
+  color: #565EEF
+}
