@@ -40,6 +40,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [alohomoraUsed, setAlohomoaUsed] = useState(false);
   const [timer, setTimer] = useState({ seconds: 0, minutes: 0 });
   const isGameEnded = status === STATUS_WON || status === STATUS_LOST;
+  const [mistakes, setMistakes] = useState(0);
+
 
   function handleClickOpenNextCard(card) {
     if (gameLightRegime && attemptCounter > 0) {
@@ -83,62 +85,51 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   }
 
   function openCard(clickedCard) {
-    if (
-      clickedCard &&
-      clickedCard.card &&
-      clickedCard.card.suit &&
-      !clickedCard.open &&
-      status === STATUS_IN_PROGRESS
-    ) {
-      const updatedCards = cards.map((card) => {
-        if (card.id === clickedCard.card.id) {
-          return { ...card, open: true };
-        } else {
+    // Если карта уже открыта или игра окончена, то ничего не делаем
+    if (clickedCard.open || isGameEnded) {
+      return;
+    }
+  
+    // Открываем выбранную карту
+    setCards(cards.map(card => {
+      return card.id === clickedCard.id ? { ...card, open: true } : card;
+    }));
+  
+    // Получаем массив только что открытых карт, которые еще не угаданы
+    const justOpenedCards = cards.map(card => {
+      return card.id === clickedCard.id ? { ...card, open: true } : card;
+    }).filter(card => card.open && !card.matched);
+    
+    // Если была открыта вторая карта и обе они не угаданы, проверяем на совпадение
+    if (justOpenedCards.length === 2) {
+      const [firstCard, secondCard] = justOpenedCards;
+      if (firstCard.suit === secondCard.suit && firstCard.rank === secondCard.rank) {
+        // Если карты совпадают, помечаем карты как угаданные
+        setCards(cards.map(card => {
+          if (card.suit === firstCard.suit && card.rank === firstCard.rank) {
+            return { ...card, matched: true, open: true };
+          }
           return card;
-        }
-      });
-      setCards(updatedCards);
+        }));
   
-      const nextCards = updatedCards.map((card) =>
-        card.id === clickedCard.id ? { ...card, open: true } : card
-      );
-  
-      const openCards = nextCards.filter((card) => card.open);
-      const uniqueOpenCards = getUniqueCards(openCards);
-  
-      if (uniqueOpenCards.length % 2 === 0) {
-        if (uniqueOpenCards.length === pairsCount * 2) {
+        // Проверяем, все ли пары карт угаданы
+        const allMatched = cards.every(card => card.matched);
+        if (allMatched) {
+          // Если все пары карт угаданы, игрок победил
           finishGame(STATUS_WON);
-          return;
         }
-  
-        if (
-          uniqueOpenCards.length === 2 &&
-          cards[uniqueOpenCards[0]].suit !== cards[uniqueOpenCards[1]].suit &&
-          cards[uniqueOpenCards[0]].rank !== cards[uniqueOpenCards[1]].rank
-        ) {
-          setAttempts((prev) => Math.max(prev - 1, 0));
-          setTimeout(() => {
-            const updatedCards = nextCards.map((card) =>
-              uniqueOpenCards.includes(card)
-                ? { ...card, open: false }
-                : card
-            );
-            setCards(updatedCards);
-          }, 1000);
-        }
+      } else {
+        // Если карты не совпадают, игрок проиграл
+        finishGame(STATUS_LOST);
       }
     }
+    // Ожидаем выбора второй карты или начала новой игры
   }
   
 
-  function getUniqueCards(cards) {
-    return cards.filter(card => {
-      return cards.some(compareCard => {
-        return compareCard.suit === card.suit && compareCard.rank === card.rank && compareCard.id !== card.id;
-      });
-    });
-  }
+  
+  
+  
 
   useEffect(() => {
     if (status === STATUS_PREVIEW) {

@@ -35,8 +35,12 @@ const handleProzrenie = useSelector(state=>state.game.handleProzrenie)
         }} className={styles.input} type="text" placeholder= "Пользователь"></input>:null}
       <p className={styles.description}>Затраченное время:</p>
       <div className={styles.time}>
-        {gameDurationMinutes.toString().padStart(2, "0")}.{gameDurationSeconds.toString().padStart(2, "0")}
-      </div>
+  {gameDurationMinutes !== undefined && gameDurationSeconds !== undefined ? (
+    `${gameDurationMinutes.toString().padStart(2, "0")}.${gameDurationSeconds.toString().padStart(2, "0")}`
+  ) : (
+    "00.00"
+  )}
+</div>
 <div onClick={(isWon===true)
    ?()=>postNewLeader(userName,gameDuration,handleAlohomoa,handleProzrenie, gameHardRegime):null}>
       
