@@ -1,5 +1,5 @@
 import styles from "./EndGameModal.module.css";
-import { toggleGameRegime } from "../../store/sliceGame"; // Импортируем нужный экшн
+import { toggleGameRegime } from "../../store/sliceGame"; 
 import { useDispatch } from "react-redux";
 
 export function CheckboxFunc() {

@@ -2,7 +2,7 @@ import { shuffle } from "lodash";
 import { useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
 import styles from "./Cards.module.css";
-import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
+import { EndGameModal } from "../EndGameModal/endGame";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { useSelector } from "react-redux";
