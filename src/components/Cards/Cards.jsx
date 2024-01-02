@@ -16,11 +16,11 @@ const STATUS_PAUSED = "STATUS_PAUSED";
 function getTimerValue(startDate, endDate) {
   if (!startDate) return { minutes: 0, seconds: 0 };
   if (!endDate) endDate = new Date();
-  
+
   const diffInSeconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
   const minutes = Math.floor(diffInSeconds / 60);
   const seconds = diffInSeconds % 60;
-  
+
   return { minutes, seconds };
 }
 
@@ -39,8 +39,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [prozrenieUsed, setProzrenieUsed] = useState(false);
   const [alohomoraUsed, setAlohomoaUsed] = useState(false);
   const [timer, setTimer] = useState({ seconds: 0, minutes: 0 });
-  const isGameEnded = status === STATUS_WON || status === STATUS_LOST;
-  const [mistakes, setMistakes] = useState(0);
+
 
 
   function handleClickOpenNextCard(card) {
@@ -84,52 +83,48 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setCards(shuffledCards);
   }
 
-  function openCard(clickedCard) {
-    // Если карта уже открыта или игра окончена, то ничего не делаем
-    if (clickedCard.open || isGameEnded) {
-      return;
+  const openCard = clickedCard => {
+    if (clickedCard.open) {
+      return
     }
-  
-    // Открываем выбранную карту
-    setCards(cards.map(card => {
-      return card.id === clickedCard.id ? { ...card, open: true } : card;
-    }));
-  
-    // Получаем массив только что открытых карт, которые еще не угаданы
-    const justOpenedCards = cards.map(card => {
-      return card.id === clickedCard.id ? { ...card, open: true } : card;
-    }).filter(card => card.open && !card.matched);
-    
-    // Если была открыта вторая карта и обе они не угаданы, проверяем на совпадение
-    if (justOpenedCards.length === 2) {
-      const [firstCard, secondCard] = justOpenedCards;
-      if (firstCard.suit === secondCard.suit && firstCard.rank === secondCard.rank) {
-        // Если карты совпадают, помечаем карты как угаданные
-        setCards(cards.map(card => {
-          if (card.suit === firstCard.suit && card.rank === firstCard.rank) {
-            return { ...card, matched: true, open: true };
-          }
-          return card;
-        }));
-  
-        // Проверяем, все ли пары карт угаданы
-        const allMatched = cards.every(card => card.matched);
-        if (allMatched) {
-          // Если все пары карт угаданы, игрок победил
-          finishGame(STATUS_WON);
-        }
-      } else {
-        // Если карты не совпадают, игрок проиграл
-        finishGame(STATUS_LOST);
+    const nextCards = cards.map(card => {
+      if (card.id !== clickedCard.id) {
+        return card
       }
+      return {
+        ...card,
+        open: true,
+      }
+    })
+    setCards(nextCards)
+    const isPlayerWon = nextCards.every(card => card.open)
+    if (isPlayerWon) {
+      finishGame(STATUS_WON)
+      return
     }
-    // Ожидаем выбора второй карты или начала новой игры
+    const openCards = nextCards.filter(card => card.open)
+    const openCardsWithoutPair = openCards.filter(card => {
+      const sameCards = openCards.filter(openCard => card.suit === openCard.suit && card.rank === openCard.rank)
+      return sameCards.length < 2;
+    })
+    const playerLost = openCardsWithoutPair.length >= 2
+    if (playerLost) {
+      setAttempts(attempts - 1)
+      attemptCounter = attempts
+      if (gameLightRegime) {
+        attemptCounter <= 0 ? finishGame(STATUS_LOST) : {}
+      } else {
+        finishGame(STATUS_LOST)
+      }
+      return
+    }
   }
-  
+  const isGameEnded = status === STATUS_LOST || status === STATUS_WON
 
-  
-  
-  
+
+
+
+
 
   useEffect(() => {
     if (status === STATUS_PREVIEW) {
@@ -157,10 +152,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   function handleProzrenie(cards, setCards, setGameStatus, status, setProzrenieUsed) {
     if (setProzrenieUsed()) return;
-  
+
     setProzrenieUsed(true);
     const openCards = []; // массив для хранения открытых карт
-  
+
     // Проверяем каждую пару карт на совпадение валета и масти
     for (let i = 0; i < cards.length; i++) {
       for (let j = i + 1; j < cards.length; j++) {
@@ -169,7 +164,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         }
       }
     }
-  
+
     // Обновляем состояние карт, открывая только соответствующие карты
     setCards(prevCards =>
       prevCards.map(card => {
@@ -179,10 +174,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         return card;
       })
     );
-  
+
     if (status === STATUS_IN_PROGRESS) {
       setGameStatus(STATUS_PAUSED);
-  
+
       setTimeout(() => {
         // Закрываем открытые карты обратно
         setCards(prevCards =>
@@ -198,10 +193,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       }, 5000);
     }
   }
-  
+
   function handleAlohomoa(cards, setCards, setAlohomoaUsed) {
     if (setAlohomoaUsed()) return;
-  
+
     setAlohomoaUsed(true);
     const closedCards = cards.filter(card => !card.open);
     const randomIndex = Math.floor(Math.random() * closedCards.length);
@@ -209,7 +204,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     const secondCard = closedCards.find(
       card => card.id !== firstCard.id && card.suit === firstCard.suit && card.rank !== firstCard.rank
     );
-  
+
     if (firstCard && secondCard) {
       // Обновляем состояние кард, проверяя, что они не открыты
       setCards(prevCards =>
@@ -221,10 +216,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         })
       );
     }
-  
+
     setTimeout(() => setAlohomoaUsed(false), 5000); // Reset alohomoa used after 5 seconds
   }
-  
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -249,39 +244,42 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           )}
         </div>
         {status === STATUS_IN_PROGRESS ?
-        <div className={styles.superpowers}>
-        <button className={styles.prozrenie} onClick={() => handleProzrenie(cards, setCards, setStatus, status, setProzrenieUsed)} disabled={prozrenieUsed}>
-          
-        </button>
-        <button className={styles.alohoma} onClick={() => handleAlohomoa(cards, setCards, setAlohomoaUsed)} disabled={alohomoraUsed}>
-          
-        </button>
-      </div> : null}
-      {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
+          <div className={styles.powers}>
+            <button className={styles.prozrenie} onClick={() => handleProzrenie(cards, setCards, setStatus, status, setProzrenieUsed)} disabled={prozrenieUsed}>
+
+            </button>
+            <button className={styles.alohoma} onClick={() => handleAlohomoa(cards, setCards, setAlohomoaUsed)} disabled={alohomoraUsed}>
+
+            </button>
+          </div> : null}
+        {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
       </div>
-      
+
       <div className={styles.cards}>
-  {cards.map(card => (
-    <Card
-      key={card.id}
-      onClick={() => {
-        if (card && card.suit && card.id) {
-          openCard({ card, open: card.open, id: card.id });
-          handleClickOpenNextCard(card);
-        }
-      }}
-      open={status !== STATUS_IN_PROGRESS || (card && card.open)}
-      suit={card && card.suit ? card.suit : ''}
-      rank={card && card.rank ? card.rank : ''}
-    />
-  ))}
-</div>
+        {cards.map(card => (
+          <Card
+            key={card.id}
+            onClick={() => {
+              if (card && card.suit && card.id) {
+                openCard({ card, open: card.open, id: card.id });
+                handleClickOpenNextCard(card);
+              }
+            }}
+            open={status !== STATUS_IN_PROGRESS || (card && card.open)}
+            suit={card && card.suit ? card.suit : ''}
+            rank={card && card.rank ? card.rank : ''}
+          />
+        ))}
+      </div>
       {isGameEnded ? (
-        <EndGameModal
-          isWon={status === STATUS_WON}
-          gameDuration={timer}
-          onRestart={resetGame}
-        />
+        <div className={styles.modalContainer}>
+          <EndGameModal
+            isWon={status === STATUS_WON}
+            gameDurationSeconds={timer.seconds}
+            gameDurationMinutes={timer.minutes}
+            onClick={resetGame}
+          />
+        </div>
       ) : null}
       <div className={styles.attempts}>Число попыток: {attempts + 1}</div>
     </div>
