@@ -22,9 +22,7 @@ export async function postNewLeader(userName, time, achieveA, achieveB, gameHard
                 time: Number(time),
                 achievements: [achieveUsed, hardRegime],
             }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
+
         });
 
         if (!response.ok) {
