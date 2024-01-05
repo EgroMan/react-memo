@@ -42,6 +42,7 @@
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
+  align-items: center;
 }
 
 .achievements__block {
@@ -60,12 +61,12 @@
   height: 32px;
   display: flex;
   justify-content: center;
-
 }
 
 .acivkaBlockNOTPOWER {
   background-image: url(./NoPower.svg);
 }
+
 
 .acivkaBlockNotSuper {
   background-image: url(./notsuper.svg);
@@ -79,24 +80,13 @@
   background-image: url(./super.svg);
 }
 
-.acivkaBlockNOTPOWER:hover::after,
-.acivkaBlockNotSuper:hover::after {
-  position: absolute;
-  z-index: 1; 
-  content: url(./textPower.svg); 
-  top: -270%;
-  left: 20%;
-  height: 50px;
-  width: 100px;
+.acivkaBlockYESPOWER:hover::after {
+  z-index: 9999; 
+  content: url(./textPower.svg);
+
 }
 
-.acivkaBlockYESPOWER:hover::after,
 .acivkaBlockYesSuper:hover::after {
-  position: absolute;
-  z-index: 1;
+  z-index: 9999;
   content: url(./TexSuper.svg);
-  top: -270%;
-  left: -20%;
-  height: 50px;
-  width: 100px;
 }
