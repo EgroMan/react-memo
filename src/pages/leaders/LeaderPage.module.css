@@ -82,8 +82,8 @@
 .acivkaBlockNOTPOWER:hover::after,
 .acivkaBlockNotSuper:hover::after {
   position: absolute;
-  z-index: 1;
-  content: url(./textPower.svg);
+  z-index: 1; 
+  content: url(./textPower.svg); 
   top: -270%;
   left: 20%;
   height: 50px;
