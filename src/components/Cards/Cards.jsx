@@ -39,6 +39,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [gameStartDate, setGameStartDate] = useState(null);
   const [gameEndDate, setGameEndDate] = useState(null);
   const [showLeaderboardPrompt, setShowLeaderboardPrompt] = useState(false);
+  const [pausedTime, setPausedTime] = useState(0);
 
   const [timer, setTimer] = useState({
     seconds: 0,
@@ -300,9 +301,9 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
               </div>
             </>
           )}
-          
+
         </div>
-        
+
         {status === STATUS_IN_PROGRESS ?
           <div className={styles.powers}>
             <button className={styles.prozrenie} onClick={() => handleProzrenie(cards, setCards, setStatus, status, setProzrenieUsed)} disabled={prozrenieUsed}>
@@ -317,14 +318,14 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
       <div className={styles.cards}>
         {cards.map(card => (
-           <Card
-           key={card.id}
-           onClick={() => openCard(card)}
-           open={status !== STATUS_IN_PROGRESS ? true : card.open}
-           suit={card.suit}
-           rank={card.rank}
-         />
-       ))}
+          <Card
+            key={card.id}
+            onClick={() => openCard(card)}
+            open={status !== STATUS_IN_PROGRESS ? true : card.open}
+            suit={card.suit}
+            rank={card.rank}
+          />
+        ))}
       </div>
 
       {isGameEnded ? (
@@ -337,11 +338,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             showLeaderboardPrompt={showLeaderboardPrompt}
           />
         </div>
-        ) : null}
+      ) : null}
       <div className={styles.attempts}>
-            <div >Число попыток:</div>
-            <div className={styles.attempt}>{remainingAttempts}</div>
-          </div>
+        <div >Число попыток:</div>
+        <div className={styles.attempt}>{remainingAttempts}</div>
+      </div>
     </div>
   );
 }
