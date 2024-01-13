@@ -1,5 +1,5 @@
 import styles from "./EndGameModal.module.css";
-import { toggleGameRegime } from "../../store/sliceGame"; 
+import { gameRegimeReducer } from "../../store/slice"; 
 import { useDispatch } from "react-redux";
 
 export function CheckboxFunc() {
@@ -9,7 +9,7 @@ export function CheckboxFunc() {
       <input
         id="checkBoxInput"
         className={styles.custom__box}
-        onClick={() => dispatch(toggleGameRegime())} // Вызываем экшн для изменения состояния
+        onClick={() => dispatch(gameRegimeReducer())} // Вызываем экшн для изменения состояния
         type="checkBox"
       ></input>
       <label htmlFor="checkBoxInput"></label>

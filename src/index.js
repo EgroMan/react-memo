@@ -5,6 +5,7 @@ import { RouterProvider } from "react-router-dom"
 import { router } from "./router"
 import { Provider } from "react-redux"
 import store from'./store/indexStore'
+
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
   <React.StrictMode>

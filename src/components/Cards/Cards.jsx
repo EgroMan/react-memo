@@ -210,59 +210,53 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   function handleProzrenie(cards, setCards, setGameStatus, status, setProzrenieUsed) {
     if (setProzrenieUsed()) return;
-
+  
     setProzrenieUsed(true);
-    const openCards = []; // массив для хранения открытых карт
-
-    // Проверяем каждую пару карт на совпадение валета и масти
-    for (let i = 0; i < cards.length; i++) {
-      for (let j = i + 1; j < cards.length; j++) {
-        if (cards[i].rank === cards[j].rank && cards[i].suit === cards[j].suit) {
-          openCards.push(cards[i].id, cards[j].id); // сохраняем id открытых карт
-        }
-      }
-    }
-
-    // Обновляем состояние карт, открывая только соответствующие карты
+  
+    const closedCards = cards.filter(card => !card.open); // Находим все закрытые карты
+  
+    // Открываем все закрытые карты на 5 секунд
     setCards(prevCards =>
       prevCards.map(card => {
-        if (openCards.includes(card.id)) {
+        if (closedCards.some(closedCard => closedCard.id === card.id)) {
           return { ...card, open: true };
         }
         return card;
       })
     );
-
-    if (status === STATUS_IN_PROGRESS) {
-      setGameStatus(STATUS_PAUSED);
-
+  
+    if (status === "STATUS_IN_PROGRESS") {
+      setGameStatus("STATUS_PAUSED");
+  
       setTimeout(() => {
         // Закрываем открытые карты обратно
         setCards(prevCards =>
           prevCards.map(card => {
-            if (openCards.includes(card.id)) {
+            if (closedCards.some(closedCard => closedCard.id === card.id)) {
               return { ...card, open: false };
             }
             return card;
           })
         );
-        setGameStatus(STATUS_IN_PROGRESS);
+        setGameStatus("STATUS_IN_PROGRESS");
         setProzrenieUsed(false);
       }, 5000);
     }
   }
+  
+
+  
 
   function handleAlohomoa(cards, setCards, setAlohomoaUsed) {
-    if (setAlohomoaUsed()) return;
-
-    setAlohomoaUsed(true);
+    if (setAlohomoaUsed(true)) return; // Используйте setAlohomoaUsed с аргументом для установки состояния
+  
     const closedCards = cards.filter(card => !card.open);
     const randomIndex = Math.floor(Math.random() * closedCards.length);
     const firstCard = closedCards[randomIndex];
-    const secondCard = closedCards.find(
-      card => card.id !== firstCard.id && card.suit === firstCard.suit && card.rank !== firstCard.rank
+    const secondCard = closedCards.find(card =>
+      card.id !== firstCard.id && card.suit === firstCard.suit && card.rank === firstCard.rank
     );
-
+  
     if (firstCard && secondCard) {
       // Обновляем состояние кард, проверяя, что они не открыты
       setCards(prevCards =>
@@ -274,9 +268,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         })
       );
     }
-
-    setTimeout(() => setAlohomoaUsed(false), 5000); // Reset alohomoa used after 5 seconds
+  
+    setTimeout(() => setAlohomoaUsed(false), 5000); // Сброс флага после 5 секунд
   }
+  
 
 
   return (

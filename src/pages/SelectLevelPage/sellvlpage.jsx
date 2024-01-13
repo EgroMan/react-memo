@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./SelectLevelPage.module.css";
 import { CheckboxFunc } from "../../components/EndGameModal/check";
-import { setGameNumber } from "../../store/sliceGame";
+import { setGameNumber } from "../../store/slice";
 import { useDispatch } from "react-redux";
 
 export function SelectLevelPage() {
